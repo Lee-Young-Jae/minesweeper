@@ -1,7 +1,8 @@
 const theme = {
   colors: {
-    default: "#FF4438",
-    light: "#FFE6E4",
+    default: "#6AACE6",
+    light: "#B3D7F9",
+    dark: "#6A84E6",
   },
   fontSize: {
     xs: `0.75rem`,
@@ -17,13 +18,13 @@ const theme = {
     bold: "700",
   },
   nearMineColors: {
-    one: "#60718F",
-    two: "#8090A9",
-    three: "#C9D1D8",
-    four: "#F0EAE4",
+    one: "#2353FA",
+    two: "#BA9C49",
+    three: "#4E61A5",
+    four: "#7A6F4E",
     five: "#F4D3D1",
     six: "#F1BDC4",
-    seven: "#F0A6B0",
+    seven: "#8090A9",
     eight: "#FF4438",
   },
 
@@ -34,6 +35,7 @@ const theme = {
   },
 
   margin: {
+    xs: "4px",
     s: "8px",
     m: "16px",
     l: "24px",
