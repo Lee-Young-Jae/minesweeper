@@ -6,6 +6,7 @@ import {
   flag,
   checkLose,
   checkWin,
+  explode,
 } from "../../../../utills/game";
 import { useState } from "react";
 
@@ -17,6 +18,8 @@ const Board = () => {
 
     if (checkLose(board.board, x, y)) {
       // TODO: 게임 오버 처리
+      const newBoard = explode(board.board, board.mineLocation);
+      setBoard({ ...board, board: newBoard });
       alert("Game Over");
       return;
     }

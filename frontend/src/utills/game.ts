@@ -184,3 +184,21 @@ export const checkLose = (
 
   return false;
 };
+
+export const explode = (
+  board: {
+    x: number;
+    y: number;
+    isMine: boolean;
+    isFlag: boolean;
+    isRevealed: boolean;
+    neighbour: number;
+  }[][],
+  mineLocation: { x: number; y: number }[]
+) => {
+  for (let i = 0; i < mineLocation.length; i++) {
+    board[mineLocation[i].x][mineLocation[i].y].isRevealed = true;
+  }
+
+  return board;
+};
