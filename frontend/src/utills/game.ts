@@ -88,3 +88,38 @@ export const generateBoard = (
 
   return { board, mineLocation };
 };
+
+export const reveal = (
+  board: {
+    x: number;
+    y: number;
+    isMine: boolean;
+    isFlag: boolean;
+    isRevealed: boolean;
+    neighbour: number;
+  }[][],
+  row: number,
+  collumn: number
+) => {
+  if (board[row][collumn].isRevealed || board[row][collumn].isFlag)
+    return board;
+  board[row][collumn].isRevealed = true;
+
+  if (board[row][collumn].neighbour === 0) {
+    for (let i = -1; i < 2; i++) {
+      if (row + i < 0 || row + i >= board.length) continue;
+
+      for (let j = -1; j < 2; j++) {
+        if (collumn + j < 0 || collumn + j >= board[0].length) continue;
+
+        // 자기 자신은 제외
+        if (i === 0 && j === 0) continue;
+
+        // 재귀호출로 0인 부분은 모두 표시한다.
+        reveal(board, row + i, collumn + j);
+      }
+    }
+  }
+
+  return board;
+};
