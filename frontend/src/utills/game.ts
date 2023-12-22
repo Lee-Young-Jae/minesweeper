@@ -141,3 +141,46 @@ export const flag = (
 
   return board;
 };
+
+export const checkWin = (
+  board: {
+    x: number;
+    y: number;
+    isMine: boolean;
+    isFlag: boolean;
+    isRevealed: boolean;
+    neighbour: number;
+  }[][],
+  mineLocation: { x: number; y: number }[]
+) => {
+  let win = true;
+
+  // Board의 모든 칸을 검사한다.
+  for (let x = 0; x < board.length; x++) {
+    for (let y = 0; y < board[0].length; y++) {
+      // 지뢰가 아닌 칸이면서 아직 열리지 않은 칸이 있다면 게임은 아직 진행중이다.
+      if (!board[x][y].isMine && !board[x][y].isRevealed) {
+        win = false;
+        break;
+      }
+    }
+  }
+  return win;
+};
+
+export const checkLose = (
+  board: {
+    x: number;
+    y: number;
+    isMine: boolean;
+    isFlag: boolean;
+    isRevealed: boolean;
+    neighbour: number;
+  }[][],
+  row: number,
+  collumn: number
+) => {
+  if (board[row][collumn].isMine) return true;
+
+  return false;
+};

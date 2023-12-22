@@ -1,16 +1,32 @@
 import { StyledContainer, StyledRow } from "./Board.styles";
 import Cell from "../Cell";
-import { generateBoard, reveal, flag } from "../../../../utills/game";
+import {
+  generateBoard,
+  reveal,
+  flag,
+  checkLose,
+  checkWin,
+} from "../../../../utills/game";
 import { useState } from "react";
 
 const Board = () => {
-  const [board, setBoard] = useState(generateBoard(10, 10, 10, { x: 1, y: 1 }));
-  const [gameOver, setGameOver] = useState(false);
+  const [board, setBoard] = useState(generateBoard(4, 4, 3, { x: 1, y: 1 }));
 
   const handleCellClick = (x: number, y: number) => {
     if (board.board[x][y].isFlag || board.board[x][y].isRevealed) return;
 
+    if (checkLose(board.board, x, y)) {
+      // TODO: 게임 오버 처리
+      alert("Game Over");
+      return;
+    }
+
     const newBoard = reveal(board.board, x, y);
+    if (checkWin(board.board, board.mineLocation)) {
+      // TODO: 게임 승리 처리
+      alert("Game Win");
+      return;
+    }
     setBoard({ ...board, board: newBoard });
   };
 
@@ -20,7 +36,14 @@ const Board = () => {
     y: number
   ) => {
     e.preventDefault();
+    if (board.board[x][y].isRevealed) return;
+
     const newBoard = flag(board.board, x, y);
+    if (checkWin(board.board, board.mineLocation)) {
+      // TODO: 게임 승리 처리
+      alert("Game Win");
+      return;
+    }
     setBoard({ ...board, board: newBoard });
   };
 
