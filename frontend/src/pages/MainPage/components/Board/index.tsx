@@ -1,6 +1,6 @@
 import { StyledContainer, StyledRow } from "./Board.styles";
 import Cell from "../Cell";
-import { generateBoard, reveal } from "../../../../utills/game";
+import { generateBoard, reveal, flag } from "../../../../utills/game";
 import { useState } from "react";
 
 const Board = () => {
@@ -20,15 +20,7 @@ const Board = () => {
     y: number
   ) => {
     e.preventDefault();
-    if (board.board[x][y].isRevealed) return;
-    const newBoard = board.board.map((row) => {
-      return row.map((cell) => {
-        if (cell.x === x && cell.y === y) {
-          return { ...cell, isFlag: !cell.isFlag };
-        }
-        return cell;
-      });
-    });
+    const newBoard = flag(board.board, x, y);
     setBoard({ ...board, board: newBoard });
   };
 

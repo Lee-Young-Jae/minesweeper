@@ -123,3 +123,21 @@ export const reveal = (
 
   return board;
 };
+
+export const flag = (
+  board: {
+    x: number;
+    y: number;
+    isMine: boolean;
+    isFlag: boolean;
+    isRevealed: boolean;
+    neighbour: number;
+  }[][],
+  row: number,
+  collumn: number
+) => {
+  if (board[row][collumn].isRevealed) return board;
+  board[row][collumn].isFlag = !board[row][collumn].isFlag;
+
+  return board;
+};
