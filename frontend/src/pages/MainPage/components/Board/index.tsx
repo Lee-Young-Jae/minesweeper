@@ -7,11 +7,14 @@ import {
   checkLose,
   checkWin,
   explode,
+  areaOpen,
 } from "../../../../utills/game";
 import { useState } from "react";
 
 const Board = () => {
-  const [board, setBoard] = useState(generateBoard(4, 4, 3, { x: 1, y: 1 }));
+  const [board, setBoard] = useState(
+    generateBoard(15, 15, 30, { x: -1, y: -1 })
+  );
 
   const handleCellClick = (x: number, y: number) => {
     if (board.board[x][y].isFlag || board.board[x][y].isRevealed) return;
@@ -50,6 +53,30 @@ const Board = () => {
     setBoard({ ...board, board: newBoard });
   };
 
+  const handleCellDualClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    x: number,
+    y: number
+  ) => {
+    e.preventDefault();
+
+    const newBoard = areaOpen(board.board, x, y);
+    if (checkLose(board.board, x, y)) {
+      // TODO: 게임 오버 처리
+      const newBoard = explode(board.board, board.mineLocation);
+      setBoard({ ...board, board: newBoard });
+      alert("Game Over");
+      return;
+    }
+
+    if (checkWin(board.board, board.mineLocation)) {
+      // TODO: 게임 승리 처리
+      alert("Game Win");
+      return;
+    }
+    setBoard({ ...board, board: newBoard });
+  };
+
   return (
     <StyledContainer>
       {board.board.map((row, index) => {
@@ -67,6 +94,7 @@ const Board = () => {
                   isRevealed={cell.isRevealed}
                   onClick={handleCellClick}
                   onRightClick={handleCellRightClick}
+                  onDualClick={handleCellDualClick}
                 />
               );
             })}

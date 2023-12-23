@@ -213,3 +213,44 @@ export const explode = (
 
   return board;
 };
+
+export const areaOpen = (
+  board: {
+    x: number;
+    y: number;
+    isMine: boolean;
+    isFlag: boolean;
+    isRevealed: boolean;
+    neighbour: number;
+  }[][],
+  row: number,
+  collumn: number
+) => {
+  let flagCount = 0;
+
+  for (let i = -1; i < 2; i++) {
+    if (row + i < 0 || row + i >= board.length) continue;
+
+    for (let j = -1; j < 2; j++) {
+      if (collumn + j < 0 || collumn + j >= board[0].length) continue;
+
+      if (board[row + i][collumn + j].isFlag) flagCount++;
+    }
+  }
+
+  if (flagCount !== board[row][collumn].neighbour) return board;
+
+  for (let i = -1; i < 2; i++) {
+    if (row + i < 0 || row + i >= board.length) continue;
+
+    for (let j = -1; j < 2; j++) {
+      if (collumn + j < 0 || collumn + j >= board[0].length) continue;
+
+      if (i === 0 && j === 0) continue;
+
+      reveal(board, row + i, collumn + j);
+    }
+  }
+
+  return board;
+};
