@@ -10,29 +10,34 @@ import {
   areaOpen,
 } from "../../../../utills/game";
 import { useState } from "react";
+import { withLayout, EnhancedLayoutProps } from "../../../../utills/lib/Layout";
 
-const Board = () => {
-  const [board, setBoard] = useState(
-    generateBoard(15, 15, 30, { x: -1, y: -1 })
-  );
+const Board = ({
+  startLoading,
+  finishLoading,
+  openDialog,
+}: EnhancedLayoutProps) => {
+  const [board, setBoard] = useState(generateBoard(5, 5, 3, { x: 0, y: 0 }));
 
   const handleCellClick = (x: number, y: number) => {
     if (board.board[x][y].isFlag || board.board[x][y].isRevealed) return;
 
+    startLoading();
     if (checkLose(board.board, x, y)) {
       // TODO: 게임 오버 처리
       const newBoard = explode(board.board, board.mineLocation);
       setBoard({ ...board, board: newBoard });
-      alert("Game Over");
+      openDialog(<p>Game Over</p>);
       return;
     }
 
     const newBoard = reveal(board.board, x, y);
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
-      alert("Game Win");
+      openDialog(<p>Game Win</p>);
       return;
     }
+    finishLoading();
     setBoard({ ...board, board: newBoard });
   };
 
@@ -47,7 +52,7 @@ const Board = () => {
     const newBoard = flag(board.board, x, y);
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
-      alert("Game Win");
+      openDialog(<p>Game Win</p>);
       return;
     }
     setBoard({ ...board, board: newBoard });
@@ -65,13 +70,13 @@ const Board = () => {
       // TODO: 게임 오버 처리
       const newBoard = explode(board.board, board.mineLocation);
       setBoard({ ...board, board: newBoard });
-      alert("Game Over");
+      openDialog(<p>Game Over</p>);
       return;
     }
 
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
-      alert("Game Win");
+      openDialog(<p>Game Win</p>);
       return;
     }
     setBoard({ ...board, board: newBoard });
@@ -105,4 +110,4 @@ const Board = () => {
   );
 };
 
-export default Board;
+export default withLayout(Board);
