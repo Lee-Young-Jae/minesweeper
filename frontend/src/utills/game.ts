@@ -99,8 +99,12 @@ export const reveal = (
     neighbour: number;
   }[][],
   row: number,
-  collumn: number
+  collumn: number,
+  callStackCount = 0
 ) => {
+  callStackCount++;
+  if (callStackCount > 7000) return board;
+
   if (board[row][collumn].isRevealed || board[row][collumn].isFlag)
     return board;
   board[row][collumn].isRevealed = true;
@@ -112,11 +116,9 @@ export const reveal = (
       for (let j = -1; j < 2; j++) {
         if (collumn + j < 0 || collumn + j >= board[0].length) continue;
 
-        // 자기 자신은 제외
         if (i === 0 && j === 0) continue;
 
-        // 재귀호출로 0인 부분은 모두 표시한다.
-        reveal(board, row + i, collumn + j);
+        reveal(board, row + i, collumn + j, callStackCount);
       }
     }
   }
@@ -155,7 +157,6 @@ export const checkWin = (
 ) => {
   let win = true;
 
-  // Board의 모든 칸을 검사한다.
   for (let x = 0; x < board.length; x++) {
     for (let y = 0; y < board[0].length; y++) {
       // 지뢰가 아닌 칸이면서 아직 열리지 않은 칸이 있다면 게임은 아직 진행중이다.
@@ -181,8 +182,18 @@ export const checkLose = (
   collumn: number
 ) => {
   if (board[row][collumn].isMine) return true;
+  let lose = false;
 
-  return false;
+  for (let x = 0; x < board.length; x++) {
+    for (let y = 0; y < board[0].length; y++) {
+      if (board[x][y].isMine && board[x][y].isRevealed) {
+        lose = true;
+        break;
+      }
+    }
+  }
+
+  return lose;
 };
 
 export const explode = (
