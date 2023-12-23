@@ -25,18 +25,6 @@ export const generateBoard = (
     let subCollumn = [];
 
     for (let y = 0; y < collumn; y++) {
-      if (x === initialSelection.x && y === initialSelection.y) {
-        subCollumn.push({
-          x: x,
-          y: y,
-          isMine: false,
-          isFlag: false,
-          isRevealed: true,
-          neighbour: 0,
-        });
-        continue;
-      }
-
       subCollumn.push({
         x: x,
         y: y,
@@ -85,6 +73,11 @@ export const generateBoard = (
       board[x][y].neighbour = count;
     }
   }
+
+  console.log(board);
+  board = reveal(board, initialSelection.x, initialSelection.y);
+
+  console.log(board);
 
   return { board, mineLocation };
 };
