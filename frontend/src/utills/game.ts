@@ -43,11 +43,21 @@ export const generateBoard = (
     let x = Math.floor(Math.random() * row);
     let y = Math.floor(Math.random() * collumn);
 
-    if (
-      (x === initialSelection.x && y === initialSelection.y) ||
-      board[x][y].isMine
-    )
-      continue;
+    // 초기 선택한 칸 주변 8칸에는 지뢰가 없다.
+    const isInitialSelection = (x: number, y: number) => {
+      for (let i = -1; i < 2; i++) {
+        if (x + i < 0 || x + i >= row) continue;
+
+        for (let j = -1; j < 2; j++) {
+          if (y + j < 0 || y + j >= collumn) continue;
+
+          if (x + i === initialSelection.x && y + j === initialSelection.y)
+            return true;
+        }
+      }
+      return false;
+    };
+    if (isInitialSelection(x, y) || board[x][y].isMine) continue;
 
     board[x][y].isMine = true;
     mineLocation.push({ x: x, y: y });
@@ -74,10 +84,7 @@ export const generateBoard = (
     }
   }
 
-  console.log(board);
   board = reveal(board, initialSelection.x, initialSelection.y);
-
-  console.log(board);
 
   return { board, mineLocation };
 };
