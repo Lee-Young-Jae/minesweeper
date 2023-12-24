@@ -1,7 +1,6 @@
 import { StyledContainer, StyledRow } from "./Board.styles";
 import Cell from "../Cell";
 import {
-  generateEmptyBoard,
   generateBoard,
   reveal,
   flag,
@@ -10,76 +9,118 @@ import {
   explode,
   areaOpen,
 } from "../../../../utills/game";
-import { useState } from "react";
 import { withLayout, EnhancedLayoutProps } from "../../../../utills/lib/Layout";
 
-// redux
 import { useDispatch, useSelector } from "react-redux";
-import { setIsStarted, setEmotion } from "../../../../redux/gameSlice";
+import {
+  setIsGaming,
+  setEmotion,
+  setBoard,
+  setMineCount,
+  resetGame,
+} from "../../../../redux/gameSlice";
 import { RootState } from "../../../../redux/rootReducer";
 import { GAME } from "../../../../utills/constance";
+import Dialog from "../../../../components/Dialog";
+import Button from "../../../../components/Button";
 
 const Board = ({
   startLoading,
   finishLoading,
   openDialog,
+  closeDialog,
 }: EnhancedLayoutProps) => {
-  const { isStarted, difficulty } = useSelector(
+  const { isGaming, difficulty, board } = useSelector(
     (state: RootState) => state.game
-  );
-
-  const [board, setBoard] = useState(
-    generateEmptyBoard(difficulty.col, difficulty.row)
   );
 
   const dispatch = useDispatch();
 
   const win = () => {
-    setEmotion(GAME.EMOTION.WIN);
-    openDialog(<p>Game Win</p>);
+    finishLoading();
+    dispatch(setEmotion(GAME.EMOTION.WIN));
+    openDialog(
+      <Dialog
+        header="✨Game Win"
+        footer={
+          <Button
+            onClick={() => {
+              dispatch(resetGame());
+              closeDialog();
+            }}
+          >
+            네, 좋아요
+          </Button>
+        }
+      >
+        <div>축하합니다.</div>
+        <div>다시 시작하시겠습니까?</div>
+      </Dialog>
+    );
   };
 
   const lose = () => {
-    setBoard({ ...board, board: explode(board.board, board.mineLocation) });
-    setEmotion(GAME.EMOTION.DEAD);
-    openDialog(<p>Game Over</p>);
+    finishLoading();
+    const newBoard = explode(board);
+    dispatch(setBoard(newBoard));
+    dispatch(setIsGaming(false));
+    dispatch(setEmotion(GAME.EMOTION.DEAD));
+    openDialog(
+      <Dialog
+        header="💣Game Over"
+        footer={
+          <Button
+            onClick={() => {
+              dispatch(resetGame());
+              closeDialog();
+            }}
+          >
+            다시 시작하기
+          </Button>
+        }
+      >
+        <div>지뢰를 밟았습니다.</div>
+        <div>다시 시작하시겠습니까?</div>
+      </Dialog>
+    );
+  };
+
+  const start = (x: number, y: number) => {
+    const newBoard = generateBoard(
+      board,
+      difficulty.row,
+      difficulty.col,
+      difficulty.mine,
+      { x, y }
+    );
+
+    dispatch(setBoard(newBoard));
+    dispatch(setIsGaming(true));
+    dispatch(setEmotion(GAME.EMOTION.HAPPY));
+    return;
   };
 
   const handleCellClick = (x: number, y: number) => {
-    if (!isStarted) {
-      const newBoard = generateBoard(
-        board.board,
-        difficulty.row,
-        difficulty.col,
-        difficulty.mine,
-        { x, y }
-      );
-      setBoard({
-        ...board,
-        board: newBoard.board,
-        mineLocation: newBoard.mineLocation,
-      });
-      dispatch(setIsStarted(true));
-
+    dispatch(setEmotion(GAME.EMOTION.HAPPY));
+    if (board[x][y].isFlag || board[x][y].isRevealed) return;
+    if (!isGaming) {
+      start(x, y);
       return;
     }
-    if (board.board[x][y].isFlag || board.board[x][y].isRevealed) return;
-
-    startLoading();
-    if (checkLose(board.board, x, y)) {
-      // TODO: 게임 오버 처리
+    if (checkLose(board, x, y)) {
       lose();
       return;
     }
 
-    const newBoard = reveal(board.board, x, y);
-    if (checkWin(board.board, board.mineLocation)) {
-      // TODO: 게임 승리 처리
+    startLoading();
+    const _Board = board.map((row) => row.map((cell) => ({ ...cell })));
+    const newBoard = reveal(_Board, x, y);
+    finishLoading();
+    dispatch(setBoard(newBoard));
+    if (checkWin(newBoard)) {
       win();
       return;
     }
-    finishLoading();
-    setBoard({ ...board, board: newBoard });
   };
 
   const handleCellRightClick = (
@@ -88,15 +129,11 @@ const Board = ({
     y: number
   ) => {
     e.preventDefault();
-    if (board.board[x][y].isRevealed) return;
-
-    const newBoard = flag(board.board, x, y);
-    if (checkWin(board.board, board.mineLocation)) {
-      // TODO: 게임 승리 처리
-      win();
-      return;
-    }
-    setBoard({ ...board, board: newBoard });
+    if (board[x][y].isRevealed) return;
+    dispatch(setEmotion(GAME.EMOTION.SURPRISED));
+    const newBoard = flag(board, x, y);
+    dispatch(setBoard(newBoard));
+    dispatch(setMineCount());
   };
 
   const handleCellDualClick = (
@@ -105,24 +142,26 @@ const Board = ({
     y: number
   ) => {
     e.preventDefault();
-    const newBoard = areaOpen(board.board, x, y);
-    if (checkLose(board.board, x, y)) {
-      // TODO: 게임 오버 처리
+    if (!board[x][y].isRevealed || board[x][y].isFlag) return;
+    startLoading();
+    const _Board = board.map((row) => row.map((cell) => ({ ...cell })));
+    const newBoard = areaOpen(_Board, x, y);
+    finishLoading();
+    dispatch(setBoard(newBoard));
+    if (checkLose(newBoard, x, y)) {
       lose();
       return;
     }
 
-    if (checkWin(board.board, board.mineLocation)) {
-      // TODO: 게임 승리 처리
+    if (checkWin(newBoard)) {
       win();
       return;
     }
-    setBoard({ ...board, board: newBoard });
   };
 
   return (
     <StyledContainer>
-      {board.board.map((row, index) => {
+      {board.map((row, index) => {
         return (
           <StyledRow key={index}>
             {row.map((cell, index) => {

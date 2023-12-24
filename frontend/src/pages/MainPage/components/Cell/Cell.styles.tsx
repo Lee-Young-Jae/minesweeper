@@ -17,6 +17,12 @@ const StyledContainer = styled.div<StyledCellProps>`
   width: 20px;
   height: 20px;
 
+  &:hover {
+    background-color: ${(props) => {
+      return props.$isRevealed ? "dark" : props.theme.colors.dark;
+    }};
+  }
+
   // isRevealed
   ${(props) =>
     props.$isRevealed &&
@@ -54,7 +60,6 @@ const StyledContainer = styled.div<StyledCellProps>`
           return "black";
       }
     } else {
-      // return "transparent";
       return "black";
     }
   }};

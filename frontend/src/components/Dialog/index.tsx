@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  StyledContainer,
+  StyledMain,
+  StyledFooter,
+  StyledHeader,
+} from "./Dialog.styles";
 
 interface DialogProps {
   header?: React.ReactNode;
@@ -8,11 +14,11 @@ interface DialogProps {
 
 const Dialog = ({ header, footer, children }: DialogProps) => {
   return (
-    <div>
-      {header && <header>{header}</header>}
-      <main>{children}</main>
-      {footer && <footer>{footer}</footer>}
-    </div>
+    <StyledContainer>
+      {header && <StyledHeader>{header}</StyledHeader>}
+      <StyledMain>{children}</StyledMain>
+      {footer && <StyledFooter>{footer}</StyledFooter>}
+    </StyledContainer>
   );
 };
 

@@ -47,7 +47,7 @@ const gameSlice = createSlice({
             return acc + (col.isFlag ? 1 : 0);
           }, 0)
         );
-      }, mine - 1);
+      }, mine);
     },
     setElapsedTime(state, action: PayloadAction<number>) {
       state.elapsedTime = action.payload;
@@ -67,6 +67,17 @@ const gameSlice = createSlice({
     ) {
       state.board = action.payload;
     },
+
+    resetGame(state) {
+      state.isGaming = false;
+      state.emotion = GAME.EMOTION.HAPPY;
+      state.mineCount = state.difficulty.mine;
+      state.elapsedTime = 0;
+      state.board = generateEmptyBoard(
+        state.difficulty.row,
+        state.difficulty.col
+      );
+    },
   },
 });
 
@@ -78,5 +89,6 @@ export const {
   setMineCount,
   setBoard,
   setElapsedTime,
+  resetGame,
 } = gameSlice.actions;
 export default gameSlice.reducer;

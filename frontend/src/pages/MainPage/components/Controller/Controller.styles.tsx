@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 const StyledContainer = styled.div`
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,6 +8,8 @@ const StyledContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.default};
   background-color: ${({ theme }) => theme.colors.default};
   border-radius: ${({ theme }) => theme.borderRadius.s};
+  max-width: 500px;
+  margin: 1rem auto;
 `;
 
 const StyledGameInfo = styled.div`
@@ -28,8 +29,14 @@ const StyledGameInfo = styled.div`
     justify-content: center;
     font-size: 1rem;
     font-weight: 700;
-    width: 33%;
   }
+`;
+
+const StyledEmotion = styled.div`
+  margin: 0 auto;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 100%;
 `;
 
 const StyledDifficulty = styled.div`
@@ -53,4 +60,4 @@ const StyledDifficulty = styled.div`
   }
 `;
 
-export { StyledContainer, StyledDifficulty, StyledGameInfo };
+export { StyledContainer, StyledDifficulty, StyledGameInfo, StyledEmotion };
