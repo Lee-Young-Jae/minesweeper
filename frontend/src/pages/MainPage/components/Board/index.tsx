@@ -1,6 +1,7 @@
 import { StyledContainer, StyledRow } from "./Board.styles";
 import Cell from "../Cell";
 import {
+  generateEmptyBoard,
   generateBoard,
   reveal,
   flag,
@@ -12,14 +13,45 @@ import {
 import { useState } from "react";
 import { withLayout, EnhancedLayoutProps } from "../../../../utills/lib/Layout";
 
+// redux
+import { useDispatch, useSelector } from "react-redux";
+import { setIsStarted, setEmotion } from "../../../../redux/gameSlice";
+import { RootState } from "../../../../redux/rootReducer";
+import { GAME } from "../../../../utills/constance";
+
 const Board = ({
   startLoading,
   finishLoading,
   openDialog,
 }: EnhancedLayoutProps) => {
-  const [board, setBoard] = useState(generateBoard(5, 5, 3, { x: 0, y: 0 }));
+  const { isStarted, difficulty } = useSelector(
+    (state: RootState) => state.game
+  );
+
+  const [board, setBoard] = useState(
+    generateEmptyBoard(difficulty.col, difficulty.row)
+  );
+
+  const dispatch = useDispatch();
 
   const handleCellClick = (x: number, y: number) => {
+    if (!isStarted) {
+      const newBoard = generateBoard(
+        board.board,
+        difficulty.row,
+        difficulty.col,
+        difficulty.mine,
+        { x, y }
+      );
+      setBoard({
+        ...board,
+        board: newBoard.board,
+        mineLocation: newBoard.mineLocation,
+      });
+      dispatch(setIsStarted(true));
+
+      return;
+    }
     if (board.board[x][y].isFlag || board.board[x][y].isRevealed) return;
 
     startLoading();
@@ -27,6 +59,7 @@ const Board = ({
       // TODO: 게임 오버 처리
       const newBoard = explode(board.board, board.mineLocation);
       setBoard({ ...board, board: newBoard });
+      setEmotion(GAME.EMOTION.DEAD);
       openDialog(<p>Game Over</p>);
       return;
     }
@@ -34,6 +67,7 @@ const Board = ({
     const newBoard = reveal(board.board, x, y);
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
+      setEmotion(GAME.EMOTION.WIN);
       openDialog(<p>Game Win</p>);
       return;
     }
@@ -52,6 +86,7 @@ const Board = ({
     const newBoard = flag(board.board, x, y);
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
+      setEmotion(GAME.EMOTION.WIN);
       openDialog(<p>Game Win</p>);
       return;
     }
@@ -64,18 +99,19 @@ const Board = ({
     y: number
   ) => {
     e.preventDefault();
-
     const newBoard = areaOpen(board.board, x, y);
     if (checkLose(board.board, x, y)) {
       // TODO: 게임 오버 처리
       const newBoard = explode(board.board, board.mineLocation);
       setBoard({ ...board, board: newBoard });
+      setEmotion(GAME.EMOTION.DEAD);
       openDialog(<p>Game Over</p>);
       return;
     }
 
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
+      setEmotion(GAME.EMOTION.WIN);
       openDialog(<p>Game Win</p>);
       return;
     }

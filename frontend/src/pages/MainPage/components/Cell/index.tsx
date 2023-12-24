@@ -14,6 +14,11 @@ interface CellProps {
     x: number,
     y: number
   ) => void;
+  onDualClick: (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    x: number,
+    y: number
+  ) => void;
 }
 
 const Cell = ({
@@ -25,18 +30,25 @@ const Cell = ({
   isRevealed,
   onClick,
   onRightClick,
+  onDualClick,
 }: CellProps) => {
   const handleLeftClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
-    onClick(row, collumn);
+    if (e.buttons === 0) onClick(row, collumn);
   };
 
   const handleRightClick = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     e.preventDefault();
-    onRightClick(e, row, collumn);
+    if (e.buttons === 0) onRightClick(e, row, collumn);
   };
+
+  const handleDualClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault();
+    if (e.buttons === 3) onDualClick(e, row, collumn);
+  };
+
   return (
     <StyledContainer
       $isFlag={isFlag}
@@ -44,10 +56,13 @@ const Cell = ({
       $neighbour={neighbour}
       onClick={handleLeftClick}
       onContextMenu={handleRightClick}
+      onMouseDown={handleDualClick}
     >
       {isRevealed && !isMine && neighbour !== 0 ? neighbour : ""}
-      {isRevealed && isMine ? "💣" : ""}
+      {isRevealed && isMine ? "💥" : ""}
       {isFlag && !isRevealed ? "🚩" : ""}
+      {/* 개발모드 */}
+      {/* {isMine ? "💣" : ""} */}
     </StyledContainer>
   );
 };

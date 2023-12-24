@@ -1,25 +1,8 @@
 import { GAME } from "./constance";
 
-export const generateBoard = (
-  row: number,
-  collumn: number,
-  mineCount: number,
-  initialSelection: { x: number; y: number }
-) => {
-  const { MAX_COL, MAX_ROW, MAX_MINE, MIN_COL, MIN_MINE, MIN_ROW } =
-    GAME.GAME_RULES;
-
-  if (row > MAX_ROW) row = MAX_ROW;
-  if (collumn > MAX_COL) collumn = MAX_COL;
-  if (mineCount > MAX_MINE) mineCount = MAX_MINE;
-  if (row < MIN_ROW) row = MIN_ROW;
-  if (collumn < MIN_COL) collumn = MIN_COL;
-  if (mineCount < MIN_MINE) mineCount = MIN_MINE;
-  if (mineCount > Math.floor((row * collumn) / 3))
-    mineCount = Math.floor((row * collumn) / 3);
-
+export const generateEmptyBoard = (row: number, collumn: number) => {
   let board = [];
-  let mineLocation = [];
+  let mineLocation = [{ x: 0, y: 0 }];
 
   for (let x = 0; x < row; x++) {
     let subCollumn = [];
@@ -37,6 +20,38 @@ export const generateBoard = (
 
     board.push(subCollumn);
   }
+
+  return { board, mineLocation };
+};
+
+export const generateBoard = (
+  board: {
+    x: number;
+    y: number;
+    isMine: boolean;
+    isFlag: boolean;
+    isRevealed: boolean;
+    neighbour: number;
+  }[][],
+  row: number,
+  collumn: number,
+  mineCount: number,
+  initialSelection: { x: number; y: number }
+) => {
+  const { MAX_COL, MAX_ROW, MAX_MINE, MIN_COL, MIN_MINE, MIN_ROW } =
+    GAME.GAME_RULES;
+
+  if (row > MAX_ROW) row = MAX_ROW;
+  if (collumn > MAX_COL) collumn = MAX_COL;
+  if (mineCount > MAX_MINE) mineCount = MAX_MINE;
+  if (row < MIN_ROW) row = MIN_ROW;
+  if (collumn < MIN_COL) collumn = MIN_COL;
+  if (mineCount < MIN_MINE) mineCount = MIN_MINE;
+  if (mineCount > Math.floor((row * collumn) / 3))
+    mineCount = Math.floor((row * collumn) / 3);
+
+  let mineLocation = [];
+  let newBoard = [...board];
 
   // 지뢰를 랜덤하게 생성한다.
   while (mineCount > 0) {
@@ -57,9 +72,9 @@ export const generateBoard = (
       }
       return false;
     };
-    if (isInitialSelection(x, y) || board[x][y].isMine) continue;
+    if (isInitialSelection(x, y) || newBoard[x][y].isMine) continue;
 
-    board[x][y].isMine = true;
+    newBoard[x][y].isMine = true;
     mineLocation.push({ x: x, y: y });
     mineCount--;
   }
@@ -67,7 +82,7 @@ export const generateBoard = (
   // 지뢰 주변 숫자를 표시한다.
   for (let x = 0; x < row; x++) {
     for (let y = 0; y < collumn; y++) {
-      if (board[x][y].isMine) continue;
+      if (newBoard[x][y].isMine) continue;
 
       let count = 0;
 
@@ -76,17 +91,17 @@ export const generateBoard = (
           if (x + i < 0 || x + i >= row || y + j < 0 || y + j >= collumn)
             continue;
 
-          if (board[x + i][y + j].isMine) count++;
+          if (newBoard[x + i][y + j].isMine) count++;
         }
       }
 
-      board[x][y].neighbour = count;
+      newBoard[x][y].neighbour = count;
     }
   }
 
-  board = reveal(board, initialSelection.x, initialSelection.y);
+  newBoard = reveal(newBoard, initialSelection.x, initialSelection.y);
 
-  return { board, mineLocation };
+  return { board: newBoard, mineLocation };
 };
 
 export const reveal = (

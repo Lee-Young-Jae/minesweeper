@@ -11,6 +11,33 @@ const GAME_RULES = {
   MIN_MINE: 1,
 };
 
+const DIFFICULTY = {
+  BEGINNER: {
+    row: 8,
+    col: 8,
+    mine: 10,
+  },
+  INTERMEDIATE: {
+    row: 16,
+    col: 16,
+    mine: 40,
+  },
+  EXPERT: {
+    row: 16,
+    col: 30,
+    mine: 99,
+  },
+};
+
+const EMOTION = {
+  HAPPY: "😀",
+  SURPRISED: "😮",
+  DEAD: "💀",
+  WIN: "🤩",
+};
+
 export const GAME = {
   GAME_RULES,
+  DIFFICULTY,
+  EMOTION,
 };
