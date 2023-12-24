@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { withLayout, EnhancedLayoutProps } from "../../../../utills/lib/Layout";
+import { withLayout } from "../../../../utills/lib/Layout";
 import Timer from "../Timer";
 import {
   StyledContainer,
@@ -8,7 +8,11 @@ import {
   StyledEmotion,
 } from "./Controller.styles";
 import { RootState } from "../../../../redux/rootReducer";
-import { resetGame, setDifficulty } from "../../../../redux/gameSlice";
+import {
+  resetGame,
+  setDifficulty,
+  setIsDifficultyCustom,
+} from "../../../../redux/gameSlice";
 import Input from "../../../../components/Input";
 import { useState } from "react";
 import { GAME } from "../../../../utills/constance";
@@ -73,6 +77,7 @@ const CustomDifficulty = () => {
 
   const handleCustomDifficulty = () => {
     if (validate()) {
+      dispatch(setIsDifficultyCustom(true));
       dispatch(
         setDifficulty({
           row: customDifficulty.row,
@@ -126,6 +131,7 @@ const Controller = () => {
   const [isCustom, setIsCustom] = useState(false);
 
   const patchResetGame = (row: number, col: number, mine: number) => {
+    dispatch(setIsDifficultyCustom(false));
     dispatch(
       setDifficulty({
         row,

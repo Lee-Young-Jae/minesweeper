@@ -62,7 +62,7 @@ const Cell = ({
       {isRevealed && isMine ? "💥" : ""}
       {isFlag && !isRevealed ? "🚩" : ""}
       {/* 개발모드 */}
-      {/* {isMine ? "💣" : ""} */}
+      {isMine ? "💣" : ""}
     </StyledContainer>
   );
 };

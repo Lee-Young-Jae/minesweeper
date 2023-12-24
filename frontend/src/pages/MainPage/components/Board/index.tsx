@@ -30,7 +30,7 @@ const Board = ({
   openDialog,
   closeDialog,
 }: EnhancedLayoutProps) => {
-  const { isGaming, difficulty, board } = useSelector(
+  const { isGaming, difficulty, board, elapsedTime } = useSelector(
     (state: RootState) => state.game
   );
 
@@ -54,7 +54,7 @@ const Board = ({
         }
       >
         <div>축하합니다.</div>
-        <div>다시 시작하시겠습니까?</div>
+        <div>걸린 시간은 {elapsedTime}초 입니다.</div>
       </Dialog>
     );
   };
