@@ -2,17 +2,51 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GAME } from "../utills/constance";
 import { generateEmptyBoard } from "../utills/game";
 
+const loadDifficultyFromLocalStorage = (): {
+  row: number;
+  col: number;
+  mine: number;
+} => {
+  const difficulty = localStorage.getItem("difficulty");
+  if (difficulty) {
+    return JSON.parse(difficulty);
+  }
+  return GAME.DIFFICULTY.BEGINNER;
+};
+
+const loadIsDifficultyCustom = (): boolean => {
+  const isDifficultyCustom = localStorage.getItem("isDifficultyCustom");
+  if (isDifficultyCustom) {
+    return JSON.parse(isDifficultyCustom);
+  }
+  return false;
+};
+
+const saveDifficultyToLocalStorage = (difficulty: {
+  row: number;
+  col: number;
+  mine: number;
+}) => {
+  localStorage.setItem("difficulty", JSON.stringify(difficulty));
+};
+
+const saveIsDifficultyCustomToLocalStorage = (isDifficultyCustom: boolean) => {
+  localStorage.setItem(
+    "isDifficultyCustom",
+    JSON.stringify(isDifficultyCustom)
+  );
+};
+
+const initialDifficulty = loadDifficultyFromLocalStorage();
+
 const initialState = {
-  difficulty: GAME.DIFFICULTY.BEGINNER,
-  isDifficultyCustom: false,
+  difficulty: initialDifficulty,
+  isDifficultyCustom: loadIsDifficultyCustom(),
   isGaming: false,
   emotion: GAME.EMOTION.HAPPY,
   mineCount: GAME.DIFFICULTY.BEGINNER.mine,
   elapsedTime: 0,
-  board: generateEmptyBoard(
-    GAME.DIFFICULTY.BEGINNER.row,
-    GAME.DIFFICULTY.BEGINNER.col
-  ),
+  board: generateEmptyBoard(initialDifficulty.row, initialDifficulty.col),
 };
 
 const gameSlice = createSlice({
@@ -28,9 +62,11 @@ const gameSlice = createSlice({
       }>
     ) {
       state.difficulty = action.payload;
+      saveDifficultyToLocalStorage(action.payload);
     },
     setIsDifficultyCustom(state, action: PayloadAction<boolean>) {
       state.isDifficultyCustom = action.payload;
+      saveIsDifficultyCustomToLocalStorage(action.payload);
     },
     setIsGaming(state, action: PayloadAction<boolean>) {
       state.isGaming = action.payload;
