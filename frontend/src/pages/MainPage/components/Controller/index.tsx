@@ -25,7 +25,7 @@ const Controller = ({ openDialog }: ControllerProps) => {
       <StyledGameInfo>
         <div>💣X4</div>
         <div>😀</div>
-        <Timer isStart={false} />
+        <Timer />
       </StyledGameInfo>
       <StyledDifficulty>
         <button>Beginner (8X8), 지뢰 10개</button>
