@@ -34,6 +34,17 @@ const Board = ({
 
   const dispatch = useDispatch();
 
+  const win = () => {
+    setEmotion(GAME.EMOTION.WIN);
+    openDialog(<p>Game Win</p>);
+  };
+
+  const lose = () => {
+    setBoard({ ...board, board: explode(board.board, board.mineLocation) });
+    setEmotion(GAME.EMOTION.DEAD);
+    openDialog(<p>Game Over</p>);
+  };
+
   const handleCellClick = (x: number, y: number) => {
     if (!isStarted) {
       const newBoard = generateBoard(
@@ -57,18 +68,14 @@ const Board = ({
     startLoading();
     if (checkLose(board.board, x, y)) {
       // TODO: 게임 오버 처리
-      const newBoard = explode(board.board, board.mineLocation);
-      setBoard({ ...board, board: newBoard });
-      setEmotion(GAME.EMOTION.DEAD);
-      openDialog(<p>Game Over</p>);
+      lose();
       return;
     }
 
     const newBoard = reveal(board.board, x, y);
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
-      setEmotion(GAME.EMOTION.WIN);
-      openDialog(<p>Game Win</p>);
+      win();
       return;
     }
     finishLoading();
@@ -86,8 +93,7 @@ const Board = ({
     const newBoard = flag(board.board, x, y);
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
-      setEmotion(GAME.EMOTION.WIN);
-      openDialog(<p>Game Win</p>);
+      win();
       return;
     }
     setBoard({ ...board, board: newBoard });
@@ -102,17 +108,13 @@ const Board = ({
     const newBoard = areaOpen(board.board, x, y);
     if (checkLose(board.board, x, y)) {
       // TODO: 게임 오버 처리
-      const newBoard = explode(board.board, board.mineLocation);
-      setBoard({ ...board, board: newBoard });
-      setEmotion(GAME.EMOTION.DEAD);
-      openDialog(<p>Game Over</p>);
+      lose();
       return;
     }
 
     if (checkWin(board.board, board.mineLocation)) {
       // TODO: 게임 승리 처리
-      setEmotion(GAME.EMOTION.WIN);
-      openDialog(<p>Game Win</p>);
+      win();
       return;
     }
     setBoard({ ...board, board: newBoard });
