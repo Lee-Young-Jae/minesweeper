@@ -16,7 +16,7 @@ const Timer = ({ isStart }: TimerProps) => {
     isStart ? 1000 : null
   );
 
-  return <StyledContainer>{time}</StyledContainer>;
+  return <StyledContainer>{`🕒${time}`}</StyledContainer>;
 };
 
 export default Timer;
