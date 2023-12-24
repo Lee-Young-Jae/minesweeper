@@ -36,8 +36,24 @@ const EMOTION = {
   WIN: "🤩",
 };
 
+const ICON = {
+  FLAG: "🚩",
+  EXPLOSED_MINE: "💥",
+  MINE: "💣",
+  QUESTION: "❓",
+  ROW: "⬇",
+  COL: "➡",
+} as const;
+
+export const MOUSE_CLICK = {
+  LEFT: 0,
+  RIGHT: 0,
+  DUAL: 3,
+} as const;
+
 export const GAME = {
   GAME_RULES,
   DIFFICULTY,
   EMOTION,
+  ICON,
 };

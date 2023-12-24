@@ -33,7 +33,6 @@ const Board = ({
   const { isGaming, difficulty, board, elapsedTime } = useSelector(
     (state: RootState) => state.game
   );
-
   const dispatch = useDispatch();
 
   const win = () => {
@@ -60,7 +59,6 @@ const Board = ({
   };
 
   const lose = () => {
-    finishLoading();
     const newBoard = explode(board);
     dispatch(setBoard(newBoard));
     dispatch(setIsGaming(false));

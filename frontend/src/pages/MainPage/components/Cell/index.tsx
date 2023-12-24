@@ -1,5 +1,6 @@
 import React from "react";
 import { StyledContainer } from "./Cell.styles";
+import { MOUSE_CLICK, GAME } from "../../../../utills/constance";
 
 interface CellProps {
   row: number;
@@ -34,19 +35,19 @@ const Cell = ({
 }: CellProps) => {
   const handleLeftClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
-    if (e.buttons === 0) onClick(row, collumn);
+    if (e.buttons === MOUSE_CLICK.LEFT) onClick(row, collumn);
   };
 
   const handleRightClick = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     e.preventDefault();
-    if (e.buttons === 0) onRightClick(e, row, collumn);
+    if (e.buttons === MOUSE_CLICK.RIGHT) onRightClick(e, row, collumn);
   };
 
   const handleDualClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
-    if (e.buttons === 3) onDualClick(e, row, collumn);
+    if (e.buttons === MOUSE_CLICK.DUAL) onDualClick(e, row, collumn);
   };
 
   return (
@@ -59,10 +60,10 @@ const Cell = ({
       onMouseDown={handleDualClick}
     >
       {isRevealed && !isMine && neighbour !== 0 ? neighbour : ""}
-      {isRevealed && isMine ? "💥" : ""}
-      {isFlag && !isRevealed ? "🚩" : ""}
+      {isRevealed && isMine ? GAME.ICON.EXPLOSED_MINE : ""}
+      {isFlag && !isRevealed ? GAME.ICON.FLAG : ""}
       {/* 개발모드 */}
-      {/* {isMine ? "💣" : ""} */}
+      {/* {isMine ? GAME.ICON.MINE : ""} */}
     </StyledContainer>
   );
 };

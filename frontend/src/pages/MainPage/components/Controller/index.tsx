@@ -92,33 +92,33 @@ const CustomDifficulty = () => {
   return (
     <>
       <Input
-        label="⬇"
+        label={GAME.ICON.ROW}
         id="row"
         type="number"
         value={customDifficulty.row}
-        max={100}
-        min={4}
+        max={GAME.GAME_RULES.MAX_ROW}
+        min={GAME.GAME_RULES.MIN_ROW}
         name="row"
         onChange={customDifficultyHandler}
       />
       <Input
-        label="➡"
+        label={GAME.ICON.COL}
         id="col"
         type="number"
         value={customDifficulty.col}
-        max={100}
-        min={4}
+        max={GAME.GAME_RULES.MAX_COL}
+        min={GAME.GAME_RULES.MIN_COL}
         name="col"
         onChange={customDifficultyHandler}
       />
       <Input
-        label="💣"
+        label={GAME.ICON.MINE}
         id="mine"
         type="number"
         value={customDifficulty.mine}
         name="mine"
-        max={3333}
-        min={1}
+        max={GAME.GAME_RULES.MAX_MINE}
+        min={GAME.GAME_RULES.MIN_MINE}
         onChange={customDifficultyHandler}
       />
       <Button onClick={handleCustomDifficulty}>OK</Button>
