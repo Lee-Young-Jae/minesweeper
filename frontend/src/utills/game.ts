@@ -2,7 +2,6 @@ import { GAME } from "./constance";
 
 export const generateEmptyBoard = (row: number, collumn: number) => {
   let board = [];
-  let mineLocation = [{ x: 0, y: 0 }];
 
   for (let x = 0; x < row; x++) {
     let subCollumn = [];
@@ -21,7 +20,7 @@ export const generateEmptyBoard = (row: number, collumn: number) => {
     board.push(subCollumn);
   }
 
-  return { board, mineLocation };
+  return board;
 };
 
 export const generateBoard = (
@@ -50,8 +49,9 @@ export const generateBoard = (
   if (mineCount > Math.floor((row * collumn) / 3))
     mineCount = Math.floor((row * collumn) / 3);
 
-  let mineLocation = [];
-  let newBoard = [...board];
+  let newBoard = board.map(
+    (row) => row.map((cell) => ({ ...cell })) // 깊은 복사를 사용하여 새로운 객체 생성
+  );
 
   // 지뢰를 랜덤하게 생성한다.
   while (mineCount > 0) {
@@ -75,7 +75,6 @@ export const generateBoard = (
     if (isInitialSelection(x, y) || newBoard[x][y].isMine) continue;
 
     newBoard[x][y].isMine = true;
-    mineLocation.push({ x: x, y: y });
     mineCount--;
   }
 
@@ -101,8 +100,13 @@ export const generateBoard = (
 
   newBoard = reveal(newBoard, initialSelection.x, initialSelection.y);
 
-  return { board: newBoard, mineLocation };
+  return newBoard;
 };
+
+/**
+ * #주의 : 이 함수는 board를 직접 수정한다.
+ * @param board : 깊은 복사된 board를 입력해주세요
+ */
 
 export const reveal = (
   board: {
@@ -154,9 +158,11 @@ export const flag = (
   collumn: number
 ) => {
   if (board[row][collumn].isRevealed) return board;
-  board[row][collumn].isFlag = !board[row][collumn].isFlag;
+  const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
 
-  return board;
+  newBoard[row][collumn].isFlag = !newBoard[row][collumn].isFlag;
+
+  return newBoard;
 };
 
 export const checkWin = (
@@ -167,8 +173,7 @@ export const checkWin = (
     isFlag: boolean;
     isRevealed: boolean;
     neighbour: number;
-  }[][],
-  mineLocation: { x: number; y: number }[]
+  }[][]
 ) => {
   let win = true;
 
@@ -219,16 +224,23 @@ export const explode = (
     isFlag: boolean;
     isRevealed: boolean;
     neighbour: number;
-  }[][],
-  mineLocation: { x: number; y: number }[]
+  }[][]
 ) => {
-  for (let i = 0; i < mineLocation.length; i++) {
-    board[mineLocation[i].x][mineLocation[i].y].isRevealed = true;
+  const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
+
+  for (let x = 0; x < newBoard.length; x++) {
+    for (let y = 0; y < newBoard[0].length; y++) {
+      if (newBoard[x][y].isMine) newBoard[x][y].isRevealed = true;
+    }
   }
 
-  return board;
+  return newBoard;
 };
 
+/**
+ * #주의 : 이 함수는 board를 직접 수정한다.
+ * @param board : 깊은 복사된 board를 입력해주세요
+ */
 export const areaOpen = (
   board: {
     x: number;

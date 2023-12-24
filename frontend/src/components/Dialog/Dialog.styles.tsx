@@ -18,7 +18,7 @@ const StyledHeader = styled.header`
 `;
 
 const StyledMain = styled.main`
-  flex: 1 1;
+  flex: 1;
   max-height: 200px;
   min-height: 40px;
   overflow-y: scroll;
