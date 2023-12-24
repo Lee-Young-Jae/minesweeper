@@ -11,6 +11,15 @@ const Timer = () => {
     (state: RootState) => state.game
   );
 
+  function formatNumber(number: number) {
+    let strNumber = number.toString();
+    while (strNumber.length < 3) {
+      strNumber = "0" + strNumber;
+    }
+
+    return strNumber;
+  }
+
   useInterval(
     () => {
       dispatch(setElapsedTime(elapsedTime + 1));
@@ -18,7 +27,7 @@ const Timer = () => {
     isGaming ? 1000 : null
   );
 
-  return <StyledContainer>{`🕒${elapsedTime}`}</StyledContainer>;
+  return <StyledContainer>{`🕒${formatNumber(elapsedTime)}`}</StyledContainer>;
 };
 
 export default Timer;
