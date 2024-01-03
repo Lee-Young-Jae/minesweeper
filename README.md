@@ -29,7 +29,6 @@ $npm install
 앱을 실행합니다.
 
 ```git
-
 $npm start
 ```
 
