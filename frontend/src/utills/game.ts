@@ -1,7 +1,11 @@
 import { GAME } from "./constance";
 
+const lookupTable = new Map<string, boolean>();
+
 export const generateEmptyBoard = (row: number, collumn: number) => {
   let board = [];
+
+  lookupTable.clear();
 
   for (let x = 0; x < row; x++) {
     let subCollumn = [];
@@ -107,7 +111,6 @@ export const generateBoard = (
  * #주의 : 이 함수는 board를 직접 수정한다.
  * @param board : 깊은 복사된 board를 입력해주세요
  */
-
 export const reveal = (
   board: {
     x: number;
@@ -122,11 +125,15 @@ export const reveal = (
   callStackCount = 0
 ) => {
   callStackCount++;
-  if (callStackCount > 7000) return board;
+  if (callStackCount > 4000) return board;
 
   if (board[row][collumn].isRevealed || board[row][collumn].isFlag)
     return board;
   board[row][collumn].isRevealed = true;
+
+  if (lookupTable.get(`${row},${collumn}`)) {
+    return board;
+  }
 
   if (board[row][collumn].neighbour === 0) {
     for (let i = -1; i < 2; i++) {
@@ -138,6 +145,7 @@ export const reveal = (
         if (i === 0 && j === 0) continue;
 
         reveal(board, row + i, collumn + j, callStackCount);
+        lookupTable.set(`${row + i},${collumn + j}`, true);
       }
     }
   }
